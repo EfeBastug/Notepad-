@@ -1,11 +1,10 @@
 package NotepadPlus;
-import java.awt.*;
+
+import javax.swing.*;
 import java.awt.event.*;
 import java.util.EventListener;
-import javax.swing.*;
 public class NotepadPlus implements ActionListener, MouseListener, KeyListener, EventListener {
 
-    private final JButton[] buttons = new JButton[3];
     JFrame frame1 = new JFrame();
     JPanel panel1 = new JPanel();
     JButton button1 = new JButton("A");
@@ -16,12 +15,13 @@ public class NotepadPlus implements ActionListener, MouseListener, KeyListener, 
     NotepadPlus() {
         frame1.setSize(900, 600);
         frame1.setVisible(true);
+        JButton[] buttons = new JButton[3];
         buttons[0] = button1;
         buttons[1] = button2;
         buttons[2] = button3;
 
         JTextField textField = new JTextField();
-        textField.setSize(300, 300);
+        textField.setSize(350, 300);
 
         for (JButton button : buttons) {
             button.addActionListener(this);
