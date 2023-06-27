@@ -21,7 +21,7 @@ public class NotepadPlus implements ActionListener, MouseListener, KeyListener, 
         buttons[2] = button3;
 
         JTextField textField = new JTextField();
-        textField.setSize(200, 300);
+        textField.setSize(300, 300);
 
         for (JButton button : buttons) {
             button.addActionListener(this);
@@ -31,7 +31,6 @@ public class NotepadPlus implements ActionListener, MouseListener, KeyListener, 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
     }
 
     @Override
