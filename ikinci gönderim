@@ -1,0 +1,278 @@
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+
+public class Frame extends JFrame {
+
+	int Xbound, Ybound, Xsize, Ysize;
+
+	static Panel1 panel1 = new Panel1();
+	static Panel2 panel2 = new Panel2();
+	static Panel3 panel3 = new Panel3();
+	static ArrayList<String> listofnotes = new ArrayList<>();
+	
+	Frame() {
+		Xbound = 700;
+		Ybound = 300;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+		setLayout(null);
+		add(panel1);
+		add(panel2);
+		add(panel3);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setVisible(true);
+	}
+
+	static Panel1 getPanel1() {
+		return panel1;
+	}
+	
+	static Panel2 getPanel2() {
+		return panel2;
+	}
+	
+}
+//--------------------------------------------------------------------
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+public class Panel1 extends JPanel implements ActionListener{
+
+	//ana panel
+	
+	int Xbound, Ybound, Xsize, Ysize;
+	
+	JButton newnote;
+	JButton mynotes;
+	JButton clearall;
+	JButton adddate;
+	JButton save;
+
+	JLabel tittleofnote;
+	JTextArea note;
+    JScrollPane scroll;
+	Panel1() {
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+
+		setLayout(null);
+		
+		newnote = new JButton("New Note");
+		mynotes = new JButton("My Notes");
+		clearall = new JButton("Clear");
+		adddate = new JButton("Add Date");
+		save = new JButton("Save");
+		tittleofnote = new JLabel("Default Note", SwingConstants.CENTER);
+		note = new JTextArea();
+		scroll = new JScrollPane(note);
+		
+		newnote.setBounds(380, 10, 100, 30);
+		mynotes.setBounds(380, 50, 100, 30);
+		clearall.setBounds(380, 90, 100, 30);
+		adddate.setBounds(380, 130, 100, 30);
+		save.setBounds(380, 170, 100, 30);
+		tittleofnote.setBounds(20, 10, 340, 30);
+		note.setBounds(20, 50, 340, 150);
+		
+		setPreferredSize(new Dimension(340, 150));
+		note.setLineWrap(true);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVisible(true);
+		
+		newnote.addActionListener(this);
+		mynotes.addActionListener(this);
+		clearall.addActionListener(this);
+		adddate.addActionListener(this);
+		save.addActionListener(this);
+		
+		add(newnote);
+		add(mynotes);
+		add(clearall);
+		add(adddate);
+		add(save);
+		add(tittleofnote);
+		add(note);
+		add(scroll);
+		
+		setVisible(true);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == newnote) {
+			Frame.panel1.setVisible(false);
+			Frame.panel2.setVisible(false);
+			Frame.panel3.setVisible(true);
+		}
+		if (e.getSource() == mynotes) {
+			Frame.panel1.setVisible(false);
+			Frame.panel3.setVisible(false);
+			Frame.panel2.setVisible(true);
+		}
+		if (e.getSource() == clearall) {
+			note.setText("");
+		}
+		if (e.getSource() == adddate) {
+			
+		}
+		if (e.getSource() == save) {
+
+		}
+	}
+	
+	static void secret() {
+		
+	}
+	
+	
+}
+//------------------------------------------------------------------------------
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.text.LayoutQueue;
+
+public class Panel2 extends JPanel implements ActionListener{
+
+	//MyNotes kısmına tıklanınca gelecek panel
+	
+	int Xbound, Ybound, Xsize, Ysize;
+	static int howmanynoteswehave = 0;
+	
+	//bu liste jList için
+	static DefaultListModel<String> mylist;
+	static JList<String> list; 
+		
+	JScrollPane scroll;
+	
+	
+	Panel2(){		
+		
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+
+		setLayout(null);
+		
+		mylist = new DefaultListModel<>();	
+		list = new JList<>(mylist);
+		scroll = new JScrollPane(list);
+		
+		mylist.addElement("eleman1");
+		mylist.addElement("eleman2");
+		mylist.addElement("eleman3asdfasdf");
+		mylist.addElement("eleman3");
+		mylist.addElement("eleman3");
+		
+		list.setBounds(100,30,150,40);		
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		add(list);		
+		add(scroll);
+		
+		setVisible(false);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == list) {
+			
+		}
+		
+	}
+	
+	
+	
+}
+//-------------------------------------------------------------------------------
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class Panel3 extends JPanel implements ActionListener{
+
+	//new noteye tıklanınca gelecek panel
+	
+	//bir textline okuyucu birde buton yeter.
+	
+	int Xbound, Ybound, Xsize, Ysize;
+	
+	JTextField notename = new JTextField();
+	JButton buttonforsubmit = new JButton("Create");
+	
+	Panel3(){
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+
+		setLayout(null);
+		
+		notename.setBounds(100,30,150,30);
+		buttonforsubmit.setBounds(260,30,100,30);
+		
+		buttonforsubmit.addActionListener(this);
+		
+		add(notename);
+		add(buttonforsubmit);
+		setVisible(false);
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {		
+		if(e.getSource() == buttonforsubmit) {
+			Panel2.mylist.addElement(notename.getText());
+			notename.setText("");
+			Frame.panel3.setVisible(false);
+			Frame.panel1.setVisible(true);
+		}
+		
+	}
+	
+}
+//-----------------------------------------------------------------
+
+public class main {
+	public static void main(String[] args) {
+		Frame frame = new Frame();
+	}
+}
