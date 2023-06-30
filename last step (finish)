@@ -1,0 +1,409 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.JFrame;
+
+public class Frame extends JFrame {
+
+	int Xbound, Ybound, Xsize, Ysize;
+
+	static Panel1 panel1 = new Panel1();
+	static Panel2 panel2 = new Panel2();
+	static Panel3 panel3 = new Panel3();
+
+	static HashMap<String, String> listofnotes = new HashMap<>();
+	static ArrayList<String> listoftittleshasdate = new ArrayList<>();
+
+	Frame() {
+
+		Xbound = 700;
+		Ybound = 300;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+		setLayout(null);
+		addfiles();
+		applyfiles();
+		add(panel1);
+		add(panel2);
+		add(panel3);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setVisible(true);
+
+	}
+
+	static void addfiles() {
+		File directory = new File("C:\\Users\\Administrator\\eclipse-workspace\\NotePad");
+		File[] files = directory.listFiles();
+		for (File file : files) {
+			if (file.isFile() && file.getName().endsWith(".txt")) {
+				if (file.getName().endsWith("date.txt")) {
+					listoftittleshasdate.add(file.getName());
+				} else {
+					String fileName = file.getName();
+					String key = fileName.substring(0, fileName.lastIndexOf('.'));
+					listofnotes.put(key, fileName);
+				}
+
+			}
+
+		}
+	}
+
+	static void applyfiles() {
+		if (Frame.listofnotes != null) {
+			for (String filename : Frame.listofnotes.keySet()) {
+				panel2.mylist.addElement(filename);
+			}
+			for (String filename : listoftittleshasdate) {
+				Frame.panel1.readandapplytext(filename, Frame.panel1.date);
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+
+public class main {
+	public static void main(String[] args) {
+		Frame frame = new Frame();
+
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+
+public class Panel1 extends JPanel implements ActionListener {
+
+	int Xbound, Ybound, Xsize, Ysize;
+
+	JButton newnote;
+	JButton mynotes;
+	JButton clearall;
+	JButton adddate;
+	JButton save;
+	JTextArea note;
+	JScrollPane scroll;
+	JLabel date;
+
+	static JLabel tittleofnote;
+
+	Panel1() {
+
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+		setLayout(null);
+		newnote = new JButton("New Note");
+		mynotes = new JButton("My Notes");
+		clearall = new JButton("Clear");
+		adddate = new JButton("Add Date");
+		save = new JButton("Save");
+		tittleofnote = new JLabel("", SwingConstants.CENTER);
+		note = new JTextArea();
+		scroll = new JScrollPane(note, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		date = new JLabel();
+		newnote.setBounds(380, 10, 100, 30);
+		mynotes.setBounds(380, 50, 100, 30);
+		clearall.setBounds(380, 90, 100, 30);
+		adddate.setBounds(380, 130, 100, 30);
+		save.setBounds(380, 170, 100, 30);
+		tittleofnote.setBounds(20, 10, 100, 30);
+		scroll.setBounds(20, 50, 340, 150);
+		date.setBounds(130, 10, 200, 30);
+		note.setLineWrap(true);
+		newnote.addActionListener(this);
+		mynotes.addActionListener(this);
+		clearall.addActionListener(this);
+		adddate.addActionListener(this);
+		save.addActionListener(this);
+		add(newnote);
+		add(mynotes);
+		add(clearall);
+		add(adddate);
+		add(save);
+		add(tittleofnote);
+		add(scroll);
+		add(date);
+		setVisible(false);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == newnote) {
+			Frame.panel1.setVisible(false);
+			Frame.panel2.setVisible(false);
+			Frame.panel3.setVisible(true);
+		}
+		if (e.getSource() == mynotes) {
+			Frame.panel1.setVisible(false);
+			Frame.panel3.setVisible(false);
+			Frame.panel2.setVisible(true);
+		}
+		if (e.getSource() == clearall) {
+			note.setText("");
+		}
+		if (e.getSource() == adddate) {
+			date.setText("Last Change :" + getDate());
+			Frame.listoftittleshasdate.add(tittleofnote.getText());
+			write(tittleofnote.getText() + "date.txt", date.getText());
+		}
+		if (e.getSource() == save) {
+			write(tittleofnote.getText() + ".txt", note.getText());
+		}
+	}
+
+	void write(String filename, String whattowrite) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+			String[] lines = whattowrite.split("\\n");
+
+			for (String line : lines) {
+				writer.write(line + "\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	void readandapplytext(String filename, JTextArea wheretoread) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			StringBuilder text = new StringBuilder("");
+			String line;
+			while ((line = reader.readLine()) != null) {
+				text.append(line + "\n");
+			}
+			wheretoread.setText(text.toString());
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	void readandapplytext(String filename, JLabel wheretoread) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			StringBuilder text = new StringBuilder("");
+			String line;
+			while ((line = reader.readLine()) != null) {
+				text.append(line + "\n");
+			}
+			wheretoread.setText(text.toString());
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	String getDate() {
+		Date today = new Date();
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy--HH/mm");
+		return format.format(today).toString();
+	}
+
+}
+
+//--------------------------------------------------------------------------------------
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+
+public class Panel2 extends JPanel implements ActionListener {
+
+	int Xbound, Ybound, Xsize, Ysize;
+	static int rowcounter = 0;
+
+	static DefaultListModel<String> mylist;
+	static JList<String> list;
+
+	JLabel newnote;
+	JScrollPane scroll;
+	JButton select;
+	JButton delete;
+	JButton newnoteaddbutton;
+
+	Panel2() {
+
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+		setLayout(null);
+		mylist = new DefaultListModel<>();
+		list = new JList<>(mylist);
+		scroll = new JScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBounds(130, 30, 150, 80);
+		add(scroll);
+		setVisible(true);
+		select = new JButton("Select");
+		delete = new JButton("Delete");
+		select.setBounds(290, 30, 80, 30);
+		delete.setBounds(290, 80, 80, 30);
+		select.addActionListener(this);
+		delete.addActionListener(this);
+		add(select);
+		add(delete);
+		newnote = new JLabel("New Note --->", SwingConstants.CENTER);
+		newnote.setBounds(200, 120, 80, 30);
+		add(newnote);
+		newnoteaddbutton = new JButton("Add");
+		newnoteaddbutton.setBounds(290, 130, 80, 30);
+		newnoteaddbutton.addActionListener(this);
+		add(newnoteaddbutton);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (list.getSelectedIndex() != -1) {
+			if (e.getSource() == select) {
+				Frame.panel1.note.setText("");
+				Frame.panel1.date.setText("");
+				Frame.panel1.readandapplytext(Frame.listofnotes.get(list.getSelectedValue()), Frame.panel1.note);
+				if (Frame.listoftittleshasdate.contains(list.getSelectedValue() + "date.txt")) {
+					Frame.panel1.readandapplytext(list.getSelectedValue() + "date.txt", Frame.panel1.date);
+				}
+				Frame.panel1.tittleofnote.setText(list.getSelectedValue());
+				Frame.panel2.setVisible(false);
+				Frame.panel1.setVisible(true);
+			}
+			if (e.getSource() == delete) {
+				File directory = new File("C:\\Users\\Administrator\\eclipse-workspace\\NotePad" + "\\"
+						+ list.getSelectedValue() + ".txt");
+				directory.delete();
+				mylist.removeElement(list.getSelectedValue());
+			}
+		}
+
+		if (e.getSource() == newnoteaddbutton) {
+			Frame.panel2.setVisible(false);
+			Frame.panel3.setVisible(true);
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+
+public class Panel2 extends JPanel implements ActionListener {
+
+	int Xbound, Ybound, Xsize, Ysize;
+	static int rowcounter = 0;
+
+	static DefaultListModel<String> mylist;
+	static JList<String> list;
+
+	JLabel newnote;
+	JScrollPane scroll;
+	JButton select;
+	JButton delete;
+	JButton newnoteaddbutton;
+
+	Panel2() {
+
+		Xbound = 0;
+		Ybound = 0;
+		Xsize = 500;
+		Ysize = 260;
+		setBounds(Xbound, Ybound, Xsize, Ysize);
+		setLayout(null);
+		mylist = new DefaultListModel<>();
+		list = new JList<>(mylist);
+		scroll = new JScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBounds(130, 30, 150, 80);
+		add(scroll);
+		setVisible(true);
+		select = new JButton("Select");
+		delete = new JButton("Delete");
+		select.setBounds(290, 30, 80, 30);
+		delete.setBounds(290, 80, 80, 30);
+		select.addActionListener(this);
+		delete.addActionListener(this);
+		add(select);
+		add(delete);
+		newnote = new JLabel("New Note --->", SwingConstants.CENTER);
+		newnote.setBounds(200, 120, 80, 30);
+		add(newnote);
+		newnoteaddbutton = new JButton("Add");
+		newnoteaddbutton.setBounds(290, 130, 80, 30);
+		newnoteaddbutton.addActionListener(this);
+		add(newnoteaddbutton);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (list.getSelectedIndex() != -1) {
+			if (e.getSource() == select) {
+				Frame.panel1.note.setText("");
+				Frame.panel1.date.setText("");
+				Frame.panel1.readandapplytext(Frame.listofnotes.get(list.getSelectedValue()), Frame.panel1.note);
+				if (Frame.listoftittleshasdate.contains(list.getSelectedValue() + "date.txt")) {
+					Frame.panel1.readandapplytext(list.getSelectedValue() + "date.txt", Frame.panel1.date);
+				}
+				Frame.panel1.tittleofnote.setText(list.getSelectedValue());
+				Frame.panel2.setVisible(false);
+				Frame.panel1.setVisible(true);
+			}
+			if (e.getSource() == delete) {
+				File directory = new File("C:\\Users\\Administrator\\eclipse-workspace\\NotePad" + "\\"
+						+ list.getSelectedValue() + ".txt");
+				directory.delete();
+				mylist.removeElement(list.getSelectedValue());
+			}
+		}
+
+		if (e.getSource() == newnoteaddbutton) {
+			Frame.panel2.setVisible(false);
+			Frame.panel3.setVisible(true);
+		}
+	}
+}
